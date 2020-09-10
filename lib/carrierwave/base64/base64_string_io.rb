@@ -31,7 +31,7 @@ module Carrierwave
 
         @file_name = file_name
         bytes = ::Base64.decode64 encoded_bytes
-        @file_extension = get_file_extension description, bytes
+        @file_extension = get_file_extension description
 
         super bytes
       end
@@ -47,10 +47,8 @@ module Carrierwave
       private
 
       # Determine content type from input, with provided type as fallback
-      def get_file_extension(description, bytes)
-        detected_type = MimeMagic.by_magic(bytes)
-        content_type = (detected_type && detected_type.type) ||
-                       description.split(';base64').first
+      def get_file_extension(description)
+        content_type = description.split(';base64').first
         mime_type = MIME::Types[content_type].last
         unless mime_type
           raise Carrierwave::Base64::UnknownMimeTypeError,
